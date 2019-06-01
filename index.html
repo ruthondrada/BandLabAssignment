@@ -11,8 +11,20 @@
       <title>BandLab Home</title>
   </head>
 
-  <body>
+  <body onload="fetchDataFromAPI()">
 
+
+    <!-- Put script below so that the page will load first.-->
+    <script>
+    //Obtain data from the placeholder
+
+    function fetchDataFromAPI()
+    {
+      fetch('https://jsonplaceholder.typicode.com/todos/1')
+      .then(response => response.json())
+      .then(json =>console.log(json))
+    }
+    </script>
   </body>
 
 </html>
