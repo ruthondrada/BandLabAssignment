@@ -11,14 +11,21 @@
       <title>BandLab Home</title>
   </head>
 
-  <body onload="fetchDataFromAPI()">
-    
+  <body">
+
+    <h1> Hello!</h1>
+    Click on the button below to request for list of posts
+    <input type="submit" value="Request list of posts" id="fetchDataFromAPI"/>
+
 
     <p id="showData"></p>
 
 
     <!-- Put script below so that the page will load first.-->
     <script>
+      // create a javascript eventListener to handle click event in the index.html
+      document.getElementById('fetchDataFromAPI').addEventListener('click', fetchDataFromAPI);
+
     //Obtain data from the placeholder
     function fetchDataFromAPI()
     {
