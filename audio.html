@@ -1,73 +1,94 @@
+<!-- Author: Ruth Ondrada -->
+
 <!DOCTYPE html>
 <html>
-<body>
+  <head>
+      <title>BandLab's Audio Library</title>
+  </head>
+  <body>
 
-<button id="play" >Yodel!</button>
-<script>
+    <h1>Hello!,</h1>
+      <p>
+        Welcome to <strong> BandLab's</strong> audio library! We have a few sets of audio for you to checkout!<br><br>
+        Please make your audio choices from the drop down list.<br>
+      </p>
 
-document.getElementById('play').addEventListener('click', function() {
-  //var context = new AudioContext();
+      <!-- created an audio list for user to choose what audio they want to play-->
+      <select id="audioList" onchange="selectAudio()">
+         <option value="SynthOrgan">Synth Organ</option>
+         <option value="NewWaveKit">New Wave Kit</option>
+      </select>
+      <!--Play button for users to click-->
+      <button id="playAudio">Play!</button>
 
-  var dogBarkingBuffer = null;
-  // Fix up prefixing
-  window.AudioContext = window.AudioContext || window.webkitAudioContext;
-  var context = new AudioContext();
-  const URL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg'; //use this to bypas CORS issue
-  const playButton = document.querySelector('#play');
-  loadDogSound(URL);
+    <!--Start of javascript here-->
+    <script>
+    
+    //console.log("HELLO");
+    var strUser;
 
-  function loadDogSound(url) {
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-    request.responseType = 'arraybuffer';
-
-    // Decode asynchronously
-    request.onload = function() {
-      context.decodeAudioData(request.response, function(buffer) {
-        dogBarkingBuffer = buffer;
-      });
-
-      playButton.onclick = () => playSound(dogBarkingBuffer);
-
-      function playSound(buffer) {
-        var source = context.createBufferSource(); // creates a sound source
-        source.buffer = buffer;                    // tell the source which sound to play
-        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.start();                           // play the source now
-                                               // note: on older systems, may have to use deprecated noteOn(time);
-      }
+    function selectAudio(){
+      console.log("Here");
+      var e = document.getElementById("list");
+      strUser = e.options[e.selectedIndex].value;
+      console.log("selection: ", strUser);
     }
-    request.send();
-  } //loadsound
 
-//     (function () {
-//   'use strict';
-//
-//   const URL = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/Yodel_Sound_Effect.mp3';
-//
-//   const context = new AudioContext();
-//   const playButton = document.querySelector('#play');
-//
-//   let yodelBuffer;
-//
-//   window.fetch(URL, { mode: 'no-cors' })
-//     .then(response => response.arrayBuffer())
-//     .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
-//     .then(audioBuffer => {
-//       yodelBuffer = audioBuffer;
-//     });
-//
-//     playButton.onclick = () => play(yodelBuffer);
-//
-//     function play(audioBuffer) {
-//     const source = context.createBufferSource();
-//     source.buffer = audioBuffer;
-//     source.connect(context.destination);
-//     source.start();
-//   }
-// }());
 
-  });
-</script>
-</body>
+    document.getElementById('play').addEventListener('click', function() {
+      //var context = new AudioContext();
+
+      var dogBarkingBuffer = null;
+      // Fix up prefixing
+
+
+      console.log("selection AGAIN: ", strUser);
+
+      if(strUser == "1"){
+        console.log("THIS IS 1 SELECTED: ", strUser);
+        var pls = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/synth-organ.ogg';
+      }
+      else{
+        console.log("Selected: ", strUser);
+        var pls = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg';
+      }
+
+      //const URL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg'; //use this to bypas CORS issue
+      const URL = pls;
+      //window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      var context = new AudioContext();
+      const playButton = document.querySelector('#play');
+      loadDogSound(URL);
+
+      function loadDogSound(url) {
+        console.log("url : ", url);
+        var request = new XMLHttpRequest();
+        request.open('GET', url, true);
+        request.responseType = 'arraybuffer';
+
+        // Decode asynchronously
+        request.onload = function() {
+          context.decodeAudioData(request.response, function(buffer) {
+
+            console.log("req : ", request.response);
+
+            //if undefined do nothing
+            dogBarkingBuffer = buffer;
+          });
+
+          playButton.onclick = () => playSound(dogBarkingBuffer);
+
+          function playSound(buffer) {
+          var source = context.createBufferSource(); // creates a sound source
+          source.buffer = buffer;                    // tell the source which sound to play
+          source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+          source.start();                           // play the source now
+                                                 // note: on older systems, may have to use deprecated noteOn(time);
+          }
+        }
+        request.send();
+      } //loadsound
+      });
+    </script>
+  </body>
 </html>
