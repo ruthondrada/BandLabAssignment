@@ -13,6 +13,7 @@
       Please make your audio choices from the drop down audioList.<br>
     </p>
 
+    <!--Provide an audio list to users-->
     <select id="audioList" onchange="selectAudio()">
      <option selected ="selected" value="0">Please select an audio</option>
      <option value="1">Synth Organ</option>
@@ -21,21 +22,28 @@
 
     <button id="play" >Play!</button>
 
+  <!-- script starts here, will use web audio API -->
   <script>
 
+  //Global declaration of users option
   var userOption;
-  
+
+  //When the Play button has been clicked in the UI, the audio button will this function
+  //this function, will obtain users option on which audio to play, create audio context, load , buffer, decode, and play
   function selectAudio(){
     //console.log("Here");
+
+    //obtain the value of the drop down list
     var listValue = document.getElementById("audioList");
     userOption = listValue.options[listValue.selectedIndex].value;
     console.log("selection: ", userOption);
 
     var audioBuffer = null;
-    // Fix up prefixing
 
     console.log("selection AGAIN: ", userOption);
 
+    //afer which, get the users option and put in a variable called audioURL, this is what the url to paly the audioURL/
+    //we use https://cors-anywhere.herokuapp.com to by pass the browser CORS issue
     if(userOption == "1"){
       console.log("THIS IS 1 SELECTED: ", userOption);
       var audioURL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/synth-organ.ogg';
@@ -44,20 +52,20 @@
       console.log("Selected: ", userOption);
       var audioURL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg';
     }
+    //if selected other value aside then it will alert the user to choose an audio
     else {
       alert("Please select audio");
     }
 
-    //const URL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg'; //use this to bypas CORS issue
     const URL = audioURL;
     var context = new AudioContext();
     const playButton = document.querySelector('#play');
-    loadAudio(URL);
 
-    function loadAudio(url) {
-      console.log("url : ", url);
+
+      //to load the audio
+      console.log("url : ", URL);
       var request = new XMLHttpRequest();
-      request.open('GET', url, true);
+      request.open('GET', URL, true);
       request.responseType = 'arraybuffer';
 
       // Decode asynchronously
@@ -80,9 +88,9 @@
         }
       }
       request.send();
-    } // end of loadAudio
+    //} // end of loadAudio
 
-  } //end of function
+  } //end of selectAudio function
 
   </script>
 </body>
