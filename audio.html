@@ -3,92 +3,87 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <title>BandLab's Audio Library</title>
+    <title>BandLab's Audio Library </title>
   </head>
+
   <body>
+    <h1>Hello,</h1>
+    <p>
+      Welcome to <strong> BandLab's</strong> audio library! We have a few sets of audio for you to checkout!<br><br>
+      Please make your audio choices from the drop down audioList.<br>
+    </p>
 
-    <h1>Hello!,</h1>
-      <p>
-        Welcome to <strong> BandLab's</strong> audio library! We have a few sets of audio for you to checkout!<br><br>
-        Please make your audio choices from the drop down list.<br>
-      </p>
+    <select id="audioList" onchange="selectAudio()">
+     <option selected ="selected" value="0">Please select an audio</option>
+     <option value="1">Synth Organ</option>
+     <option value="2">New Wave Kit</option>
+   </select>
 
-      <!-- created an audio list for user to choose what audio they want to play-->
-      <select id="audioList" onchange="selectAudio()">
-         <option value="SynthOrgan">Synth Organ</option>
-         <option value="NewWaveKit">New Wave Kit</option>
-      </select>
-      <!--Play button for users to click-->
-      <button id="playAudio">Play!</button>
+    <button id="play" >Play!</button>
 
-    <!--Start of javascript here-->
-    <script>
-    
-    //console.log("HELLO");
-    var strUser;
+  <script>
 
-    function selectAudio(){
-      console.log("Here");
-      var e = document.getElementById("list");
-      strUser = e.options[e.selectedIndex].value;
-      console.log("selection: ", strUser);
+  var userOption;
+  
+  function selectAudio(){
+    //console.log("Here");
+    var listValue = document.getElementById("audioList");
+    userOption = listValue.options[listValue.selectedIndex].value;
+    console.log("selection: ", userOption);
+
+    var audioBuffer = null;
+    // Fix up prefixing
+
+    console.log("selection AGAIN: ", userOption);
+
+    if(userOption == "1"){
+      console.log("THIS IS 1 SELECTED: ", userOption);
+      var audioURL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/synth-organ.ogg';
+    }
+    else if(userOption =="2"){
+      console.log("Selected: ", userOption);
+      var audioURL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg';
+    }
+    else {
+      alert("Please select audio");
     }
 
+    //const URL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg'; //use this to bypas CORS issue
+    const URL = audioURL;
+    var context = new AudioContext();
+    const playButton = document.querySelector('#play');
+    loadAudio(URL);
 
-    document.getElementById('play').addEventListener('click', function() {
-      //var context = new AudioContext();
+    function loadAudio(url) {
+      console.log("url : ", url);
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.responseType = 'arraybuffer';
 
-      var dogBarkingBuffer = null;
-      // Fix up prefixing
+      // Decode asynchronously
+      request.onload = function() {
+      console.log("onLoad");
+        context.decodeAudioData(request.response, function(buffer) {
 
+          console.log("req : ", request.response);
+          audioBuffer = buffer;
+        });
 
-      console.log("selection AGAIN: ", strUser);
-
-      if(strUser == "1"){
-        console.log("THIS IS 1 SELECTED: ", strUser);
-        var pls = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/synth-organ.ogg';
-      }
-      else{
-        console.log("Selected: ", strUser);
-        var pls = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg';
-      }
-
-      //const URL = 'https://cors-anywhere.herokuapp.com/https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg'; //use this to bypas CORS issue
-      const URL = pls;
-      //window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      var context = new AudioContext();
-      const playButton = document.querySelector('#play');
-      loadDogSound(URL);
-
-      function loadDogSound(url) {
-        console.log("url : ", url);
-        var request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.responseType = 'arraybuffer';
-
-        // Decode asynchronously
-        request.onload = function() {
-          context.decodeAudioData(request.response, function(buffer) {
-
-            console.log("req : ", request.response);
-
-            //if undefined do nothing
-            dogBarkingBuffer = buffer;
-          });
-
-          playButton.onclick = () => playSound(dogBarkingBuffer);
-
-          function playSound(buffer) {
-          var source = context.createBufferSource(); // creates a sound source
-          source.buffer = buffer;                    // tell the source which sound to play
-          source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-          source.start();                           // play the source now
-                                                 // note: on older systems, may have to use deprecated noteOn(time);
-          }
+        playButton.onclick = () => playSound(audioBuffer);
+        function playSound(buffer) {
+        playButton.disabled = true;
+        console.log("PlaySound");
+        var source = context.createBufferSource(); // creates a sound source
+        source.buffer = buffer;                    // tell the source which sound to play
+        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.start();                           // play the source now
         }
-        request.send();
-      } //loadsound
-      });
-    </script>
-  </body>
+      }
+      request.send();
+    } // end of loadAudio
+
+  } //end of function
+
+  </script>
+</body>
 </html>
