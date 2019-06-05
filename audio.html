@@ -1,4 +1,7 @@
-<!-- Author: Ruth Ondrada -->
+<!-- Author: Ruth Ondrada
+    About:This page is about using Web Audio API functionality
+    Current Progress: Able to play music as per user required but it can be play 2 songs simultanousely
+-->
 
 <!DOCTYPE html>
 <html>
@@ -27,20 +30,17 @@
 
   //Global declaration of users option
   var userOption;
+  const playButton = document.querySelector('#play');
+
 
   //When the Play button has been clicked in the UI, the audio button will this function
   //this function, will obtain users option on which audio to play, create audio context, load , buffer, decode, and play
   function selectAudio(){
-    //console.log("Here");
-
     //obtain the value of the drop down list
     var listValue = document.getElementById("audioList");
     userOption = listValue.options[listValue.selectedIndex].value;
-    console.log("selection: ", userOption);
 
-    var audioBuffer = null;
 
-    console.log("selection AGAIN: ", userOption);
 
     //afer which, get the users option and put in a variable called audioURL, this is what the url to paly the audioURL/
     //we use https://cors-anywhere.herokuapp.com to by pass the browser CORS issue
@@ -56,42 +56,33 @@
     else {
       alert("Please select audio");
     }
-
+    //declartion to prepare to use Web Audio API
+    var audioBuffer = null;
     const URL = audioURL;
     var context = new AudioContext();
-    const playButton = document.querySelector('#play');
 
+    //to load the audio
+    var request = new XMLHttpRequest();
+    request.open('GET', URL, true);
+    request.responseType = 'arraybuffer';
 
-      //to load the audio
-      console.log("url : ", URL);
-      var request = new XMLHttpRequest();
-      request.open('GET', URL, true);
-      request.responseType = 'arraybuffer';
-
-      // Decode asynchronously
-      request.onload = function() {
-      console.log("onLoad");
+    // Decode asynchronously
+    request.onload = function() {
         context.decodeAudioData(request.response, function(buffer) {
-
-          console.log("req : ", request.response);
           audioBuffer = buffer;
         });
 
-        playButton.onclick = () => playSound(audioBuffer);
+        playButton.onclick = () => playSound(audioBuffer); //call playSound function
+
         function playSound(buffer) {
-        playButton.disabled = true;
-        console.log("PlaySound");
-        var source = context.createBufferSource(); // creates a sound source
-        source.buffer = buffer;                    // tell the source which sound to play
-        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.start();                           // play the source now
-        }
-      }
+          var source = context.createBufferSource(); // creates a sound source
+          source.buffer = buffer;                    // tell the source which sound to play
+          source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+          source.start();                            // play the source now
+        } //end play sound buffer
+      } //end function
       request.send();
-    //} // end of loadAudio
-
   } //end of selectAudio function
-
   </script>
 </body>
 </html>
